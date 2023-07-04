@@ -1,6 +1,8 @@
 import os
 import io
 import logging
+import sys
+import spacy
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
@@ -50,11 +52,33 @@ def download_documents(drive_service):
         logging.info(f"Downloaded {document['name']}.")
 
 
-def main():
+def process_query(documents, query):
+    nlp = spacy.load("en_core_web_sm")
+
+    if query == "How many nouns are in all the documents?":
+        docs = [nlp(open(document, 'r').read()) for document in documents]
+        nouns = [token.text for doc in docs for token in doc if token.pos_ == "NOUN"]
+        return len(nouns)
+    elif query == "How many verbs are in all he documents?":
+        docs = [nlp(open(document, 'r').read()) for document in documents]
+        verbs = [token.text for doc in docs for token in doc if token.pos_ == "VERB"]
+        return len(verbs)
+    else:
+        return "I am not able to process your query"
+
+
+def main(query):
     credentials = authenticate()
     drive_service = build('drive', 'v3', credentials=credentials)
     download_documents(drive_service)
+    downloaded_documents = [f"downloads/{file}" for file in os.listdir('downloads')]
+    result = process_query(downloaded_documents, query)
+    logging.info(f"Query: {query}")
+    logging.info(f"Result: {result}")
 
 
 if __name__ == '__main__':
-    main()
+    query = "How many nouns are in all the documents?"
+    main(query)
+    query = "How many verbs are in all he documents?"
+    main(query)
