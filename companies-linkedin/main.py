@@ -1,6 +1,7 @@
 import csv
 import requests
 from bs4 import BeautifulSoup
+import concurrent.futures
 
 
 def get_linkedin_url(company_name):
@@ -20,11 +21,10 @@ def get_linkedin_url(company_name):
 
 
 def write_company_urls_to_file(data_rows, output_file):
-    print(list(data_rows))
     with open(output_file, "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["Company", "LinkedIn URL"])
-        writer.writerows(list(data_rows))
+        writer.writerows(data_rows)
 
 
 def read_company_names(company_names_file):
@@ -38,8 +38,16 @@ def create_rows_to_write(company_names, company_linkedin_urls):
     return list(zip(company_names, company_linkedin_urls)) or []
 
 
-company_names = read_company_names('./data/company_names.csv')
-company_linkedin_urls = [get_linkedin_url(company) for company in company_names]
-company_rows = create_rows_to_write(company_names, company_linkedin_urls)
-output_file = "./data/linkedin_urls.csv"
-write_company_urls_to_file(company_rows, output_file)
+def main():
+    company_names = read_company_names('./data/company_names.csv')
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        company_linkedin_urls = list(executor.map(get_linkedin_url, company_names))
+
+    company_rows = create_rows_to_write(company_names, company_linkedin_urls)
+    output_file = "./data/linkedin_urls.csv"
+    write_company_urls_to_file(company_rows, output_file)
+
+
+if __name__ == '__main__':
+    main()
