@@ -9,7 +9,7 @@ from googleapiclient.http import MediaIoBaseDownload
 
 logging.basicConfig(level=logging.INFO)
 
-CLIENT_SECRET_FILE = 'credentials.json'
+CLIENT_SECRET_FILE = '../credentials.json'
 DOCUMENTS_FOLDER_ID = '1me6PtWgQpshDIUUHVjawD7zKTxcHPHKK'
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
