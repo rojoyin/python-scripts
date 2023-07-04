@@ -163,3 +163,5 @@ cython_debug/
 credentials.json
 
 downloaded_files/
+
+**/data/*.csv
