@@ -1,8 +1,30 @@
 import csv
+import os
+
 import requests
 from bs4 import BeautifulSoup
 import concurrent.futures
 
+from playwright.sync_api import sync_playwright
+
+from dotenv import load_dotenv
+load_dotenv()
+
+
+def get_employee_count(linkedin_url):
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        context = browser.new_context()
+        page = context.new_page()
+        page.goto("https://www.linkedin.com/login")
+        page.fill("#username", os.getenv('username'))
+        page.fill("#password", os.getenv('password'))
+        page.click("button[type='submit']")
+        page.goto(f"{linkedin_url}/people/")
+        employee_count_element = page.wait_for_selector(".text-heading-xlarge")
+        employee_count = employee_count_element.inner_text()
+        browser.close()
+        return employee_count
 
 def get_linkedin_url(company_name):
     company_name_no_spaces = company_name.replace(" ", "+")
@@ -47,6 +69,8 @@ def main():
     company_rows = create_rows_to_write(company_names, company_linkedin_urls)
     output_file = "./data/linkedin_urls.csv"
     write_company_urls_to_file(company_rows, output_file)
+    for company_url in company_linkedin_urls:
+        print(get_employee_count(company_url))
 
 
 if __name__ == '__main__':
