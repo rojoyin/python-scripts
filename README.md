@@ -65,3 +65,11 @@ This repo contains python scripts for addressing three main challenges:
     cd g2crowdurls
     python main.py
     ```
+
+
+## Improvements:
+- Add more questions to the NLP script, and make it more generic so it could handle general questions.
+- Ensure that the LinkedIn script checks that the URI corresponds to the input company name, currently, is getting the first result from the search.
+- Handle the error we are getting in `g2crowd` project to be able to bypass the captcha/timeout check that is in place and disallows to use scrappers. Possibly, using a proxy for this could be an option.
+- In all the cases, creating endpoints so the scripts could be easily documented and consumed by other applications, including some queries in the body
+- Add unit tests for the scripts.
