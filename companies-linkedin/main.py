@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def get_employee_count(linkedin_url):
+def get_employee_count(linkedin_urls):
     with sync_playwright() as p:
         browser = p.chromium.launch()
         context = browser.new_context()
@@ -20,11 +20,13 @@ def get_employee_count(linkedin_url):
         page.fill("#username", os.getenv('username'))
         page.fill("#password", os.getenv('password'))
         page.click("button[type='submit']")
-        page.goto(f"{linkedin_url}/people/")
-        employee_count_element = page.wait_for_selector(".text-heading-xlarge")
-        employee_count = employee_count_element.inner_text()
+
+        for linkedin_url in linkedin_urls:
+            page.goto(f"{linkedin_url}/people/")
+            employee_count_element = page.wait_for_selector(".text-heading-xlarge")
+            employee_count = employee_count_element.inner_text()
+            print(f"{linkedin_url} has {employee_count}")
         browser.close()
-        return employee_count
 
 def get_linkedin_url(company_name):
     company_name_no_spaces = company_name.replace(" ", "+")
@@ -69,8 +71,7 @@ def main():
     company_rows = create_rows_to_write(company_names, company_linkedin_urls)
     output_file = "./data/linkedin_urls.csv"
     write_company_urls_to_file(company_rows, output_file)
-    for company_url in company_linkedin_urls:
-        print(get_employee_count(company_url))
+    get_employee_count(company_linkedin_urls)
 
 
 if __name__ == '__main__':
