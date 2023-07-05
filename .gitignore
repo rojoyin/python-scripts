@@ -165,3 +165,4 @@ credentials.json
 downloaded_files/
 
 **/data/*.csv
+!**/data/*.sample.csv
