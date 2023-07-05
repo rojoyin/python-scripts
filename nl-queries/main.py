@@ -1,7 +1,6 @@
 import os
 import io
 import logging
-import sys
 import spacy
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -10,7 +9,7 @@ from googleapiclient.http import MediaIoBaseDownload
 logging.basicConfig(level=logging.INFO)
 
 CLIENT_SECRET_FILE = '../credentials.json'
-DOCUMENTS_FOLDER_ID = '1me6PtWgQpshDIUUHVjawD7zKTxcHPHKK'
+DOCUMENTS_FOLDER_ID = os.getenv('google_drive_id') or '1me6PtWgQpshDIUUHVjawD7zKTxcHPHKK'
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
 
