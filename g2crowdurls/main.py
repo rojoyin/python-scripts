@@ -4,7 +4,7 @@ import time
 from playwright.sync_api import sync_playwright
 
 
-def read_company_names(g2crowdurls_file):
+def read_g2_company_urls(g2crowdurls_file):
     with open(g2crowdurls_file, 'r') as csvfile:
         reader = csv.reader(csvfile)
         next(reader)
@@ -39,5 +39,5 @@ def scrape_company_details(company_url):
     return results
 
 
-for url in read_company_names('./data/g2crowdurls.csv'):
+for url in read_g2_company_urls('./data/g2crowdurls.csv'):
     print(scrape_company_details(url))
